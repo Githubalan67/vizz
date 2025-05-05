@@ -1,6 +1,9 @@
 # main.py
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 import requests
 from bs4 import BeautifulSoup
@@ -202,12 +205,13 @@ def scrape_glassdoor(search_request: SearchRequest) -> List[Job]:
             continue
     
     return jobs
-# Add this before your routes
+# Serve static files (if you have any CSS/JS/images)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+# Serve the HTML file as the root route
 @app.get("/")
-async def read_root():
-    return FileResponse("job.html") 
+async def serve_html():
+    return FileResponse("job.html")
 # API Endpoints
 @app.post("/search-jobs", response_model=List[Job])
 async def search_jobs(search_request: SearchRequest):
@@ -237,11 +241,6 @@ async def search_jobs(search_request: SearchRequest):
 @app.get("/health")
 async def health_check():
     return {"status": "healthy"}
-
-
-@app.get("/")
-def read_root():
-    return {"message": "FastAPI is running!"}
 
 
 if __name__ == "__main__":
