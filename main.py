@@ -1,17 +1,18 @@
 # main.py
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
-
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 import requests
 from bs4 import BeautifulSoup
+import os
 import json
 from typing import List, Optional
 import re
 import time
 import random
+
 
 app = FastAPI()
 
@@ -213,8 +214,9 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 async def serve_html():
     return FileResponse("job.html")
 # API Endpoints
-@app.post("/search-jobs", response_model=List[Job])
-async def search_jobs(search_request: SearchRequest):
+@app.post("/search-jobs")
+async def search_jobs(search_request: SearchRequest, response: Response):
+    response.headers["Access-Control-Allow-Origin"] = "*"
     try:
         all_jobs = []
         
@@ -245,4 +247,5 @@ async def health_check():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    port = int(os.environ.get("PORT", 8000))  # Now this will work correctly
+    uvicorn.run(app, host="0.0.0.0", port=port)

@@ -86,7 +86,7 @@
             document.getElementById('search-text').style.display = 'none';
             
             try {
-                const response = await fetch('http://localhost:8000/search-jobs', {
+                const response = await fetch('/search-jobs', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
