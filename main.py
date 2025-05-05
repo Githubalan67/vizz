@@ -202,7 +202,12 @@ def scrape_glassdoor(search_request: SearchRequest) -> List[Job]:
             continue
     
     return jobs
+# Add this before your routes
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
+@app.get("/")
+async def read_root():
+    return FileResponse("job.html") 
 # API Endpoints
 @app.post("/search-jobs", response_model=List[Job])
 async def search_jobs(search_request: SearchRequest):
